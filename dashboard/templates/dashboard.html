@@ -1,0 +1,587 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Network IDS{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+    <!-- Navigation Bar -->
+    <nav class="bg-slate-800/80 backdrop-blur-xl border-b border-slate-700/50 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-gradient-to-br from-cyber-emerald to-cyber-cyan rounded-lg flex items-center justify-center">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                        </svg>
+                    </div>
+                    <span class="text-xl font-bold text-white">Network IDS</span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="text-slate-300 text-sm">Welcome, <span class="font-semibold text-white">{{ user.username }}</span></span>
+                    <a href="{{ url_for('auth.logout') }}" class="px-4 py-2 bg-slate-700/50 hover:bg-slate-700 text-white rounded-lg transition">
+                        Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Welcome Section -->
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-white mb-2">Intrusion Detection Dashboard</h1>
+            <p class="text-slate-400">Analyze network traffic patterns for anomalies</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Left Column -->
+            <div class="space-y-6">
+            <!-- Detection Form -->
+            <div class="bg-slate-800/50 backdrop-blur-xl rounded-2xl shadow-2xl border border-slate-700/50 p-6 flex flex-col" style="max-height: calc(100vh - 200px);">
+                <div class="flex justify-between items-center mb-4 flex-shrink-0">
+                    <h2 class="text-2xl font-bold text-white flex items-center">
+                        <svg class="w-6 h-6 mr-2 text-cyber-cyan" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        Detection Form
+                    </h2>
+                    <div class="flex gap-2">
+                        <button type="button" id="loadSampleBtn" class="px-4 py-2 bg-slate-700/50 hover:bg-slate-700 border border-slate-600 text-slate-300 text-sm font-medium rounded-lg transition hover:text-white">
+                            <svg class="w-4 h-4 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
+                            </svg>
+                            Load Sample Normal Traffic
+                        </button>
+                        <button type="button" id="loadAttackBtn" class="px-4 py-2 bg-red-900/30 hover:bg-red-900/50 border border-red-700/50 text-red-300 text-sm font-medium rounded-lg transition hover:text-red-200">
+                            <svg class="w-4 h-4 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                            </svg>
+                            Simulate Suspicious Traffic
+                        </button>
+                    </div>
+                </div>
+                
+                <form id="detectionForm" class="flex-1 overflow-y-auto custom-scrollbar min-h-0 mb-4">
+                    <div class="pr-2">
+                        <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-2">duration</label>
+                            <input type="number" name="duration" step="any" required class="w-full px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyber-cyan text-white text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-2">src_bytes</label>
+                            <input type="number" name="src_bytes" step="any" required class="w-full px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyber-cyan text-white text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-2">dst_bytes</label>
+                            <input type="number" name="dst_bytes" step="any" required class="w-full px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyber-cyan text-white text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-2">land</label>
+                            <input type="number" name="land" step="any" required class="w-full px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyber-cyan text-white text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-2">wrong_fragment</label>
+                            <input type="number" name="wrong_fragment" step="any" required class="w-full px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyber-cyan text-white text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-2">urgent</label>
+                            <input type="number" name="urgent" step="any" required class="w-full px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyber-cyan text-white text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-2">hot</label>
+                            <input type="number" name="hot" step="any" required class="w-full px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyber-cyan text-white text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-2">num_failed_logins</label>
+                            <input type="number" name="num_failed_logins" step="any" required class="w-full px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyber-cyan text-white text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-2">logged_in</label>
+                            <input type="number" name="logged_in" step="any" required class="w-full px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyber-cyan text-white text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-2">num_compromised</label>
+                            <input type="number" name="num_compromised" step="any" required class="w-full px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyber-cyan text-white text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-2">root_shell</label>
+                            <input type="number" name="root_shell" step="any" required class="w-full px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyber-cyan text-white text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-2">su_attempted</label>
+                            <input type="number" name="su_attempted" step="any" required class="w-full px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyber-cyan text-white text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-2">num_root</label>
+                            <input type="number" name="num_root" step="any" required class="w-full px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyber-cyan text-white text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-2">num_file_creations</label>
+                            <input type="number" name="num_file_creations" step="any" required class="w-full px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyber-cyan text-white text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-2">num_shells</label>
+                            <input type="number" name="num_shells" step="any" required class="w-full px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyber-cyan text-white text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-2">num_access_files</label>
+                            <input type="number" name="num_access_files" step="any" required class="w-full px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyber-cyan text-white text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-2">num_outbound_cmds</label>
+                            <input type="number" name="num_outbound_cmds" step="any" required class="w-full px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyber-cyan text-white text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-2">is_host_login</label>
+                            <input type="number" name="is_host_login" step="any" required class="w-full px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyber-cyan text-white text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-2">is_guest_login</label>
+                            <input type="number" name="is_guest_login" step="any" required class="w-full px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyber-cyan text-white text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-2">count</label>
+                            <input type="number" name="count" step="any" required class="w-full px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyber-cyan text-white text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-2">srv_count</label>
+                            <input type="number" name="srv_count" step="any" required class="w-full px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyber-cyan text-white text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-2">serror_rate</label>
+                            <input type="number" name="serror_rate" step="any" required class="w-full px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyber-cyan text-white text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-2">srv_serror_rate</label>
+                            <input type="number" name="srv_serror_rate" step="any" required class="w-full px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyber-cyan text-white text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-2">rerror_rate</label>
+                            <input type="number" name="rerror_rate" step="any" required class="w-full px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyber-cyan text-white text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-2">srv_rerror_rate</label>
+                            <input type="number" name="srv_rerror_rate" step="any" required class="w-full px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyber-cyan text-white text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-2">same_srv_rate</label>
+                            <input type="number" name="same_srv_rate" step="any" required class="w-full px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyber-cyan text-white text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-2">diff_srv_rate</label>
+                            <input type="number" name="diff_srv_rate" step="any" required class="w-full px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyber-cyan text-white text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-2">srv_diff_host_rate</label>
+                            <input type="number" name="srv_diff_host_rate" step="any" required class="w-full px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyber-cyan text-white text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-2">dst_host_count</label>
+                            <input type="number" name="dst_host_count" step="any" required class="w-full px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyber-cyan text-white text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-2">dst_host_srv_count</label>
+                            <input type="number" name="dst_host_srv_count" step="any" required class="w-full px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyber-cyan text-white text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-2">dst_host_same_srv_rate</label>
+                            <input type="number" name="dst_host_same_srv_rate" step="any" required class="w-full px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyber-cyan text-white text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-2">dst_host_diff_srv_rate</label>
+                            <input type="number" name="dst_host_diff_srv_rate" step="any" required class="w-full px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyber-cyan text-white text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-2">dst_host_same_src_port_rate</label>
+                            <input type="number" name="dst_host_same_src_port_rate" step="any" required class="w-full px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyber-cyan text-white text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-2">dst_host_srv_diff_host_rate</label>
+                            <input type="number" name="dst_host_srv_diff_host_rate" step="any" required class="w-full px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyber-cyan text-white text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-2">dst_host_serror_rate</label>
+                            <input type="number" name="dst_host_serror_rate" step="any" required class="w-full px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyber-cyan text-white text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-2">dst_host_srv_serror_rate</label>
+                            <input type="number" name="dst_host_srv_serror_rate" step="any" required class="w-full px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyber-cyan text-white text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-2">dst_host_rerror_rate</label>
+                            <input type="number" name="dst_host_rerror_rate" step="any" required class="w-full px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyber-cyan text-white text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-2">dst_host_srv_rerror_rate</label>
+                            <input type="number" name="dst_host_srv_rerror_rate" step="any" required class="w-full px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyber-cyan text-white text-sm">
+                        </div>
+                        </div>
+                    </div>
+                </form>
+                
+                <div class="pt-3 border-t border-slate-700/50 flex-shrink-0">
+                    <button type="submit" form="detectionForm" id="submitBtn"
+                        class="w-full bg-gradient-to-r from-cyber-emerald to-cyber-cyan hover:from-cyber-emerald/90 hover:to-cyber-cyan/90 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-200 shadow-lg shadow-cyber-emerald/20 hover:shadow-xl hover:shadow-cyber-emerald/30 transform hover:-translate-y-0.5">
+                        <span id="submitText">Analyze Traffic</span>
+                        <span id="submitLoading" class="hidden">Analyzing...</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Detection Insights -->
+            <div class="bg-slate-800/50 backdrop-blur-xl rounded-2xl shadow-2xl border border-slate-700/50 p-6">
+                <h2 class="text-xl font-bold text-white mb-4 flex items-center">
+                    <svg class="w-5 h-5 mr-2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    Detection Insights
+                </h2>
+                <div class="space-y-2 text-sm text-slate-400 leading-relaxed">
+                    <p>• Ensemble-based anomaly detection using multiple models</p>
+                    <p>• Risk levels derived from combined anomaly scores</p>
+                    <p>• Confidence indicates strength of model agreement</p>
+                    <p>• Lower anomaly scores indicate higher deviation from normal behavior</p>
+                    <p>• Detection operates at flow-level (not packet-level)</p>
+                </div>
+            </div>
+            </div>
+
+            <!-- Results Section -->
+            <div class="space-y-6">
+                <!-- Result Card -->
+                <div id="resultCard" class="bg-slate-800/50 backdrop-blur-xl rounded-2xl shadow-2xl border border-slate-700/50 p-6 hidden">
+                    <h2 class="text-2xl font-bold text-white mb-6 flex items-center">
+                        <svg class="w-6 h-6 mr-2 text-cyber-cyan" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                        </svg>
+                        Detection Result
+                    </h2>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-400 mb-2">Anomaly Score</label>
+                            <div id="anomalyScore" class="text-3xl font-bold text-white"></div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-400 mb-2">Risk Level</label>
+                                <div id="riskLevel" class="inline-block px-4 py-2 rounded-lg font-semibold text-lg"></div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-400 mb-2">Confidence</label>
+                                <div id="confidence" class="text-2xl font-bold text-cyber-cyan"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-400 mb-2">Model Agreement</label>
+                            <div id="modelAgreement" class="text-lg font-medium text-slate-300"></div>
+                        </div>
+                        <div id="driftWarning" class="hidden p-3 bg-yellow-500/20 border border-yellow-500/50 rounded-lg">
+                            <p class="text-yellow-300 text-sm">
+                                <svg class="w-4 h-4 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                                </svg>
+                                Input significantly deviates from training distribution
+                            </p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-400 mb-2">Explanation</label>
+                            <div id="explanation" class="text-slate-300 text-sm leading-relaxed bg-slate-700/30 p-3 rounded-lg"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- History Table -->
+                <div class="bg-slate-800/50 backdrop-blur-xl rounded-2xl shadow-2xl border border-slate-700/50 p-6">
+                    <h2 class="text-2xl font-bold text-white mb-6 flex items-center">
+                        <svg class="w-6 h-6 mr-2 text-cyber-cyan" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        Detection History
+                    </h2>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left">
+                            <thead>
+                                <tr class="border-b border-slate-700">
+                                    <th class="pb-3 text-sm font-semibold text-slate-400">Score</th>
+                                    <th class="pb-3 text-sm font-semibold text-slate-400">Risk</th>
+                                    <th class="pb-3 text-sm font-semibold text-slate-400">Confidence</th>
+                                    <th class="pb-3 text-sm font-semibold text-slate-400">Date</th>
+                                </tr>
+                            </thead>
+                            <tbody id="historyTable">
+                                {% for result in results %}
+                                <tr class="border-b border-slate-700/50 hover:bg-slate-700/30 transition">
+                                    <td class="py-3 text-white">{{ "%.4f"|format(result.anomaly_score) }}</td>
+                                    <td class="py-3">
+                                        <span class="px-3 py-1 rounded-full text-xs font-semibold
+                                            {% if result.risk_level == 'High' %}bg-red-500/20 text-red-300 border border-red-500/50
+                                            {% elif result.risk_level == 'Medium' %}bg-yellow-500/20 text-yellow-300 border border-yellow-500/50
+                                            {% else %}bg-green-500/20 text-green-300 border border-green-500/50{% endif %}">
+                                            {{ result.risk_level }}
+                                        </span>
+                                    </td>
+                                    <td class="py-3 text-slate-400 text-sm">{{ result.confidence if result.confidence else 'N/A' }}%</td>
+                                    <td class="py-3 text-slate-400 text-sm">{{ result.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Timeline Section -->
+                <div class="bg-slate-800/50 backdrop-blur-xl rounded-2xl shadow-2xl border border-slate-700/50 p-6">
+                    <h2 class="text-2xl font-bold text-white mb-6 flex items-center">
+                        <svg class="w-6 h-6 mr-2 text-cyber-cyan" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        Event Timeline
+                    </h2>
+                    <div class="space-y-3 max-h-64 overflow-y-auto custom-scrollbar pr-2">
+                        {% for log in audit_logs %}
+                        <div class="flex items-start space-x-3 p-2 hover:bg-slate-700/30 rounded transition">
+                            <div class="flex-shrink-0 w-2 h-2 rounded-full mt-2
+                                {% if log.event_type == 'high_risk_detection' %}bg-red-500
+                                {% elif log.event_type == 'detection' %}bg-cyber-cyan
+                                {% elif log.event_type == 'user_login' %}bg-green-500
+                                {% else %}bg-slate-500{% endif %}">
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm text-slate-300">{{ log.message }}</p>
+                                <p class="text-xs text-slate-500 mt-1">{{ log.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- System Notes -->
+                <div class="bg-slate-800/50 backdrop-blur-xl rounded-2xl shadow-2xl border border-slate-700/50 p-6">
+                    <h2 class="text-xl font-bold text-white mb-4 flex items-center">
+                        <svg class="w-5 h-5 mr-2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        System Notes
+                    </h2>
+                    <div class="space-y-2 text-sm text-slate-400 leading-relaxed">
+                        <p>• Flow-level detection (not packet-level analysis)</p>
+                        <p>• Unsupervised learning assumes normal baseline</p>
+                        <p>• Ensemble model: Isolation Forest + One-Class SVM</p>
+                        <p>• Periodic review and threshold adjustment recommended</p>
+                        <p>• Detection based on behavioral feature patterns</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script>
+const sampleData = {
+    "duration": 0.0,
+    "src_bytes": 491.0,
+    "dst_bytes": 0.0,
+    "land": 0.0,
+    "wrong_fragment": 0.0,
+    "urgent": 0.0,
+    "hot": 0.0,
+    "num_failed_logins": 0.0,
+    "logged_in": 0.0,
+    "num_compromised": 0.0,
+    "root_shell": 0.0,
+    "su_attempted": 0.0,
+    "num_root": 0.0,
+    "num_file_creations": 0.0,
+    "num_shells": 0.0,
+    "num_access_files": 0.0,
+    "num_outbound_cmds": 0.0,
+    "is_host_login": 0.0,
+    "is_guest_login": 0.0,
+    "count": 2.0,
+    "srv_count": 2.0,
+    "serror_rate": 0.0,
+    "srv_serror_rate": 0.0,
+    "rerror_rate": 0.0,
+    "srv_rerror_rate": 0.0,
+    "same_srv_rate": 1.0,
+    "diff_srv_rate": 0.0,
+    "srv_diff_host_rate": 0.0,
+    "dst_host_count": 150.0,
+    "dst_host_srv_count": 25.0,
+    "dst_host_same_srv_rate": 0.17,
+    "dst_host_diff_srv_rate": 0.03,
+    "dst_host_same_src_port_rate": 0.17,
+    "dst_host_srv_diff_host_rate": 0.0,
+    "dst_host_serror_rate": 0.0,
+    "dst_host_srv_serror_rate": 0.0,
+    "dst_host_rerror_rate": 0.05,
+    "dst_host_srv_rerror_rate": 0.0
+};
+
+const attackSimulationData = {
+    "duration": 0.0,
+    "src_bytes": 0.0,
+    "dst_bytes": 0.0,
+    "land": 0.0,
+    "wrong_fragment": 0.0,
+    "urgent": 0.0,
+    "hot": 0.0,
+    "num_failed_logins": 0.0,
+    "logged_in": 0.0,
+    "num_compromised": 0.0,
+    "root_shell": 0.0,
+    "su_attempted": 0.0,
+    "num_root": 0.0,
+    "num_file_creations": 0.0,
+    "num_shells": 0.0,
+    "num_access_files": 0.0,
+    "num_outbound_cmds": 0.0,
+    "is_host_login": 0.0,
+    "is_guest_login": 0.0,
+    "count": 123.0,
+    "srv_count": 6.0,
+    "serror_rate": 1.0,
+    "srv_serror_rate": 1.0,
+    "rerror_rate": 0.0,
+    "srv_rerror_rate": 0.0,
+    "same_srv_rate": 0.05,
+    "diff_srv_rate": 0.07,
+    "srv_diff_host_rate": 0.0,
+    "dst_host_count": 255.0,
+    "dst_host_srv_count": 26.0,
+    "dst_host_same_srv_rate": 0.1,
+    "dst_host_diff_srv_rate": 0.05,
+    "dst_host_same_src_port_rate": 0.0,
+    "dst_host_srv_diff_host_rate": 0.0,
+    "dst_host_serror_rate": 1.0,
+    "dst_host_srv_serror_rate": 1.0,
+    "dst_host_rerror_rate": 0.0,
+    "dst_host_srv_rerror_rate": 0.0
+};
+
+document.getElementById('loadSampleBtn').addEventListener('click', () => {
+    const form = document.getElementById('detectionForm');
+    Object.keys(sampleData).forEach(key => {
+        const input = form.querySelector(`[name="${key}"]`);
+        if (input) {
+            input.value = sampleData[key];
+        }
+    });
+    
+    const btn = document.getElementById('loadSampleBtn');
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<svg class="w-4 h-4 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>Sample Loaded';
+    btn.classList.add('bg-green-500/20', 'border-green-500/50', 'text-green-300');
+    btn.classList.remove('bg-slate-700/50', 'border-slate-600', 'text-slate-300');
+    
+    setTimeout(() => {
+        btn.innerHTML = originalText;
+        btn.classList.remove('bg-green-500/20', 'border-green-500/50', 'text-green-300');
+        btn.classList.add('bg-slate-700/50', 'border-slate-600', 'text-slate-300');
+    }, 2000);
+});
+
+document.getElementById('loadAttackBtn').addEventListener('click', () => {
+    const form = document.getElementById('detectionForm');
+    Object.keys(attackSimulationData).forEach(key => {
+        const input = form.querySelector(`[name="${key}"]`);
+        if (input) {
+            input.value = attackSimulationData[key];
+        }
+    });
+    
+    const btn = document.getElementById('loadAttackBtn');
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<svg class="w-4 h-4 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>Simulation Loaded';
+    btn.classList.add('bg-red-600/50', 'border-red-500', 'text-red-200');
+    
+    setTimeout(() => {
+        btn.innerHTML = originalText;
+        btn.classList.remove('bg-red-600/50', 'border-red-500', 'text-red-200');
+    }, 2000);
+});
+
+document.getElementById('detectionForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const formData = new FormData(e.target);
+    const data = {};
+    formData.forEach((value, key) => {
+        data[key] = parseFloat(value);
+    });
+    
+    const submitBtn = document.getElementById('submitBtn');
+    const submitText = document.getElementById('submitText');
+    const submitLoading = document.getElementById('submitLoading');
+    const resultCard = document.getElementById('resultCard');
+    
+    submitBtn.disabled = true;
+    submitText.classList.add('hidden');
+    submitLoading.classList.remove('hidden');
+    
+    try {
+        const response = await fetch('/api/detect', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok) {
+            document.getElementById('anomalyScore').textContent = result.anomaly_score.toFixed(4);
+            
+            const riskLevel = document.getElementById('riskLevel');
+            riskLevel.textContent = result.risk_level;
+            riskLevel.className = 'inline-block px-4 py-2 rounded-lg font-semibold text-lg ';
+            
+            if (result.risk_level === 'High') {
+                riskLevel.className += 'bg-red-500/20 text-red-300 border border-red-500/50';
+            } else if (result.risk_level === 'Medium') {
+                riskLevel.className += 'bg-yellow-500/20 text-yellow-300 border border-yellow-500/50';
+            } else {
+                riskLevel.className += 'bg-green-500/20 text-green-300 border border-green-500/50';
+            }
+            
+            document.getElementById('confidence').textContent = result.confidence + '%';
+            document.getElementById('explanation').textContent = result.explanation || 'No explanation available';
+            
+            const agreementText = {
+                'Strong': 'Both models agree (High confidence)',
+                'Partial': 'Partial model agreement (Medium confidence)',
+                'None': 'Models disagree (Low confidence)'
+            };
+            document.getElementById('modelAgreement').textContent = agreementText[result.model_agreement] || result.model_agreement;
+            
+            if (result.drift_warning) {
+                document.getElementById('driftWarning').classList.remove('hidden');
+            } else {
+                document.getElementById('driftWarning').classList.add('hidden');
+            }
+            
+            resultCard.classList.remove('hidden');
+            
+            // Reload page to update history
+            setTimeout(() => {
+                window.location.reload();
+            }, 1500);
+        } else {
+            alert('Error: ' + (result.error || 'Detection failed'));
+        }
+    } catch (error) {
+        alert('Error: ' + error.message);
+    } finally {
+        submitBtn.disabled = false;
+        submitText.classList.remove('hidden');
+        submitLoading.classList.add('hidden');
+    }
+});
+</script>
+{% endblock %}
+
