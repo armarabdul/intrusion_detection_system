@@ -1,111 +1,69 @@
-Anomaly-Based Network Intrusion Detection System
-API-Driven Machine Learning Architecture
+# 🚨 Anomaly-Based Network Intrusion Detection System  
+### API-Driven Machine Learning Architecture
 
- Live Application:
- https://intrusion-detection-system-rghn.onrender.com/
+🔗 **Live Application:**  
+👉 https://intrusion-detection-system-rghn.onrender.com/
 
- Overview
+---
 
-This project is a production-ready Network Intrusion Detection System (NIDS) built using unsupervised machine learning techniques.
-It detects anomalous network behavior by learning patterns of normal traffic and flagging deviations without relying on predefined attack signatures.
+## 📌 Overview
 
-The system is designed to resemble a real SOC (Security Operations Center) dashboard, focusing on:
+This project is a **production-ready Network Intrusion Detection System (NIDS)** built using **unsupervised machine learning** techniques.  
+It detects anomalous network behavior by learning patterns of **normal traffic** and flagging deviations without relying on predefined attack signatures.
 
-Interpretability
+The system is designed to resemble a **real SOC (Security Operations Center) dashboard**, focusing on:
+- Interpretability
+- Auditability
+- Robust backend design
+- Real-world deployment readiness
 
-Auditability
+---
 
-Robust backend design
+## 🎯 Key Objectives
 
-Real-world deployment readiness
+- Detect network intrusions using **unsupervised ML**
+- Avoid dependency on labeled attack data during training
+- Provide **explainable detection results**
+- Maintain **secure user access**
+- Enable **real-time anomaly analysis**
+- Deploy as a **cloud-hosted application**
 
- Key Objectives
+---
 
-Detect network intrusions using unsupervised ML
+## 🧠 Machine Learning Approach
 
-Avoid dependency on labeled attack data during training
+### Models Used
+- Isolation Forest  
+- One-Class SVM  
 
-Provide explainable detection results
+### Strategy
+- Trained **only on normal traffic**
+- Ensemble-based decision making
+- Threshold-based anomaly detection
+- No retraining during inference
 
-Maintain secure user access
+### Dataset
+- **NSL-KDD Dataset**
+  - Normal traffic used for training
+  - Attack traffic used only for evaluation
 
-Enable real-time anomaly analysis
+---
 
-Deploy as a cloud-hosted application
+## 🔍 Advanced Features
 
- Machine Learning Approach
-Models Used
+- **Explainability Layer** – Feature deviation-based explanations  
+- **Confidence & Severity Scoring** – LOW / MEDIUM / HIGH with percentage  
+- **Multi-Model Agreement** – Strong / Partial / None  
+- **Data Drift Awareness** – Distribution deviation warning  
+- **Audit Logging** – Login, detection, and high-risk events  
+- **Rate Limiting** – Protects inference endpoint  
+- **Attack Simulation Mode** – Safe demo of suspicious traffic  
 
-Isolation Forest
+---
 
-One-Class SVM
+## 🖥️ Application Architecture
 
-Strategy
-
-Trained only on normal traffic
-
-Ensemble-based decision making
-
-Threshold-based anomaly detection
-
-No retraining during inference
-
-Dataset
-
-NSL-KDD Dataset
-
-Normal traffic used for training
-
-Attack traffic used only for evaluation
-
- Advanced Features
- Explainability Layer
-
-Identifies top features contributing to anomaly detection
-
-Provides human-readable explanations instead of black-box outputs
-
- Confidence & Severity Scoring
-
-Risk levels: LOW / MEDIUM / HIGH
-
-Confidence score (0–100) based on ensemble agreement
-
- Multi-Model Agreement
-
-Shows whether:
-
-Both models agree
-
-Partial agreement
-
-No agreement
-
- Data Drift Awareness
-
-Warns when incoming data deviates significantly from training distribution
-
- Audit Logging
-
-Logs:
-
-User logins
-
-Failed login attempts
-
-Detection requests
-
-High-risk events
-
-Rate Limiting
-
-Protects inference endpoint from abuse
-
- Attack Simulation Mode
-
-Allows safe simulation of suspicious traffic for demonstration
-
- Application Architecture
+```
 intrusion_detection_system/
 │
 ├── api/                 # Flask backend & API
@@ -117,111 +75,86 @@ intrusion_detection_system/
 ├── requirements.txt
 ├── runtime.txt
 └── README.md
+```
 
- Authentication & Security
+---
 
-User registration & login system
+## 🔐 Authentication & Security
 
-Session-based authentication
+- User registration & login
+- Session-based authentication
+- Protected detection endpoints
+- Secure environment variable handling
 
-Protected detection endpoints
+---
 
-Secure environment variable handling
+## 🎨 Frontend Highlights
 
- Frontend Highlights
+- Dark-themed SOC-style dashboard  
+- Mobile responsive UI  
+- Timeline-based event view  
+- Detection insights & system notes  
+- Custom favicon and branding  
 
-Dark-themed, SOC-style dashboard
+---
 
-Mobile-responsive UI
+## ☁️ Deployment
 
-Clean, non-AI-generated design
+- **Platform:** Render  
+- **Runtime:** Python 3.10  
+- **Server:** Gunicorn  
+- **Database:** SQLite  
+- **ML Stack:** scikit-learn, NumPy, pandas  
 
-Timeline-based event view
+---
 
-Detection insights & system notes panels
+## 🧪 How to Use
 
-Custom favicon & branding
+1. Open the live app  
+2. Register & login  
+3. Load sample traffic or simulate attack  
+4. Analyze traffic  
+5. Review risk, confidence, explanation, and timeline  
 
- Deployment
+---
 
-Platform: Render
+## ⚠️ System Notes & Limitations
 
-Runtime: Python 3.10
+- Flow-level detection only  
+- Unsupervised learning assumptions  
+- Thresholds may require periodic tuning  
+- SQLite resets on redeploy (academic use)
 
-Server: Gunicorn
+---
 
-Database: SQLite (academic use)
+## 🧑‍💻 Internship Credit
 
-ML Libraries: scikit-learn, NumPy, pandas
+Developed during internship at  
+**Zevello Technologies**  
+🌐 https://zevello.co
 
- How to Use
+---
 
-Open the live application
- https://intrusion-detection-system-rghn.onrender.com/
+## 📚 Academic Context
 
-Register a new user account
+- **Degree:** M.Tech  
+- **Domain:** Cybersecurity & Machine Learning  
+- **Project Type:** Internship / Capstone  
+- **Focus:** Deployable ML system  
 
-Login to the dashboard
+---
 
-Use one of the following:
-
-Load Sample Normal Traffic
-
-Simulate Suspicious Traffic
-
-Or manually enter values
-
-Click Analyze Traffic
-
-View:
-
-Risk level
-
-Confidence score
-
-Explanation
-
-Model agreement
-
-Event timeline
-
- System Notes & Limitations
-
-Flow-level detection (not packet-level)
-
-Unsupervised learning assumptions apply
-
-Thresholds may require periodic review
-
-SQLite database resets on redeploy (acceptable for academic use)
-
- Internship Credit
-
-Developed during internship at
-Zevello Technologies
- https://zevello.co
-
- Academic Context
-
-Degree: M.Tech (Computer Science / Related)
-
-Domain: Cybersecurity & Machine Learning
-
-Project Type: Internship / Mini Project / Capstone
-
-Focus: Real-world deployable ML system
-
- Acknowledgement
+## 🙏 Acknowledgement
 
 Alhamdulillah for the successful completion of this project.
-This work reflects continuous learning, patience, and persistence through real-world engineering challenges.
 
- Contact
+---
 
-For queries, feedback, or collaboration:
+## 📩 Contact
 
-GitHub: armarabdul
+- **GitHub:** armarabdul  
+- **LinkedIn:** Linked via application footer  
 
-LinkedIn: (as linked in the application footer)
+---
 
- If you found this project useful or inspiring, feel free to star the repository.
+⭐ Star the repository if you found this project useful.
